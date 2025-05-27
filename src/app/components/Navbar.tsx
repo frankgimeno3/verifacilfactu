@@ -4,73 +4,76 @@ import React, { FC, useEffect, useState } from 'react';
 import AuthenticationService from './service/AuthenticationService';
 
 
-interface NavbarProps {}
+interface NavbarProps { }
 
 const Navbar: FC<NavbarProps> = ({ }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  const router = useRouter();
- 
-  const handleRedirection = () => {
-    if (isAuthenticated) {
-      router.push('/logged/dashboard');
-    } else {
-      router.push('/');
-    }
-   };
+    const router = useRouter();
 
-   const handleLogout = async () => {
-  try {
-    await AuthenticationService.logout();
-    window.location.href = '/';   
-  } catch (error) {
-    console.error("Error al cerrar sesión:", error);
-  }
-};
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/validate-token', {
-          method: 'POST',
-        });
-
-        if (res.ok) {
-          setIsAuthenticated(true);
+    const handleRedirection = (content: string) => {
+        if (isAuthenticated) {
+            router.push(content);
         } else {
-          setIsAuthenticated(false);
+            router.push('/');
         }
-      } catch (error) {
-        setIsAuthenticated(false);
-        console.log("Error: ", error)
-      }
-    }
+    };
 
-    checkAuth();
-  }, []);
+    const handleLogout = async () => {
+        try {
+            await AuthenticationService.logout();
+            window.location.href = '/';
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+        }
+    };
 
-  if (isAuthenticated === null) return null;
+    useEffect(() => {
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/validate-token', {
+                    method: 'POST',
+                });
 
- 
-  return (
-    <>
-    
- <nav className='flex flex-row py-6 px-12 justify-between bg-white text-gray-800 fixed top-0 left-0 w-full z-50 shadow-md' >
-     
-      <p onClick={handleRedirection}>
-        Facturación P3
-      </p>
+                if (res.ok) {
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                setIsAuthenticated(false);
+                console.log("Error: ", error)
+            }
+        }
 
-<div>
-      {isAuthenticated && 
-      <button className="text-white cursor-pointer" onClick={()=>{handleLogout()}}>
-     Cerrar sesión
-      </button>}
-</div>
-    </nav>
-</>
-   
-  );
+        checkAuth();
+    }, []);
+
+    if (isAuthenticated === null) return null;
+
+
+    return (
+        <nav className='flex flex-row py-6 px-12 justify-between bg-white text-gray-800 fixed top-0 left-0 w-full z-50 shadow-md' >
+            <p onClick={() => handleRedirection('/logged/dashboard')}>
+                Facturación P3
+            </p>
+            {isAuthenticated &&
+                <div className='flex flex-row'>
+                    <button className="text-gray-500 cursor-pointer pr-12 hover:text-gray-700"
+                        onClick={() => handleRedirection('/logged/facturas')}>
+                        Facturas
+                    </button>
+                    <button className="text-gray-500 cursor-pointer pr-12 hover:text-gray-700"
+                        onClick={() => handleRedirection('/logged/servicios')}>
+                        Servicios
+                    </button>
+                    <button className="text-gray-500 cursor-pointer hover:text-gray-700" onClick={() => { handleLogout() }}>
+                        Cerrar sesión
+                    </button>
+                </div>
+            }
+        </nav>
+    );
 };
 
 export default Navbar;
