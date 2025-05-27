@@ -8,6 +8,7 @@ const CrearFactura: FC<CrearFacturaProps> = ({ }) => {
   return (
     <div>
         <p>Desde aquí se creará la factura</p>
+        <p>Detalles</p>
     </div>
   );
 };
