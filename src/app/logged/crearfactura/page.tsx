@@ -6,7 +6,9 @@ interface CrearFacturaProps {
 
 const CrearFactura: FC<CrearFacturaProps> = ({ }) => {
   return (
-    <div>CrearFactura</div>
+    <div>
+        <p>Desde aquí se creará la factura</p>
+    </div>
   );
 };
 
